@@ -1,0 +1,17 @@
+Package: SA23204168
+Type: Package
+Title: Final Project of Statistical Computing
+Version: 1.0
+Date: 2023-12-05
+Author: Heng Liu
+Maintainer: Heng Liu <liuheng2001@mail.ustc.edu.cn>
+Description: Final Project of Statistical Computing that includes all my homework answers and some functions for my research project.
+License: GPL (>= 2)
+Imports: boot, bootstrap, DAAG, coda, stats, Rcpp, microbenchmark, MASS
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+LinkingTo: Rcpp
+RoxygenNote: 7.2.3
+Encoding: UTF-8
+URL: http://github.com/Flency/StatComp
+BugReports: http://github.com/Flency/StatComp/issues

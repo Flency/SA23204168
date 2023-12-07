@@ -1,0 +1,61 @@
+---
+title: "introductions of my own functions"
+author: "Heng Liu"
+date: "2023-11-27"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{introductions of my own functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## background
+Suppose the predictor variable \(X \in \mathbb{R}^p\) and the response variable \(Y \in \mathbb{R}^q\). The objective of sufficient dimension reduction is to find a low-dimensional subspace by projecting the predictor variable \(X\) into this subspace for dimension reduction while ensuring that the regression information of \(Y\) given \(X\) remains intact. Specifically, let \(B\) be a \(p \times d\) matrix where \(d \leq p\). Sufficient dimension reduction is based on the following conditional independence:
+
+\[Y \perp \!\!\! \perp X \mid B^T X\]
+
+Here, \(\perp \!\! \perp\) denotes independence, indicating that the conditional distribution of \(Y\) given \(X\) depends only on \(B^T X\). The regression information of \(Y|X\) is completely contained in the linear combination of \(X\) given by \(B^T X\). The column space of \(B\) in the above equation is referred to as the reduction subspace and denoted as \(\mathcal{S}_B\). If the intersection of all reduction subspaces itself forms a reduction subspace, it is termed as the central subspace (CS) denoted as \(\mathcal{S}_{Y|X}\).Additionally, let \(d\) be the structural dimension of the central subspace. Our main objective is to identify the central subspace by estimating \(d\) and a \(p \times d\) basis matrix \(B\) for the central subspace.
+
+
+## the usage of my functions 
+
+### R function 'sdr'
+The function 'sdr' in package 'SA23204168' estimates a \(p \times d\) basis matrix \(B\) for the central subspace. Here is an example:
+
+```{r,warning=FALSE}
+library(MASS)
+library(SA23204168)
+set.seed(1)
+n=100
+p=200
+m=20
+true.beta<-c(-0.6,-0.6,-0.6,rep(0,p-3))
+Mu <- rep(0,p) 
+Sigma <- diag(1,p)
+X<-mvrnorm(n, Mu, Sigma)
+y1 <- (1+X %*% true.beta)^3+sin(X%*%true.beta)+rnorm(n)
+y2 <- X%*%true.beta+rnorm(n)
+y<-cbind(y1,y2)
+covX<-cov(X)
+eigencovX <- eigen(covX)
+sqcovX <- eigencovX$vectors%*%sqrt(diag(pmax(eigencovX$values,0)))%*%t(eigencovX$vectors)
+initPi<-true.beta%*%t(true.beta)
+initH<-sqcovX%*%initPi%*%sqcovX
+beta<-sdr(X=X,y=y,m=m,lambda=10,K=1,nu=0.01,alpha=0.01,epsilon=1e-2,maxiter=10,trace=FALSE,initPi=initPi,initH=initH)
+
+print(beta[1:6])
+```
+
+### Rcpp function 'l2max'
+
+The function 'l2max' computes the maximum l2 norm for each column of the matrix. Here is an example:
+
+```{r}
+x <- matrix(c(1, 2, 4, 9), 2, 2)
+print(lmax(x))
+```
